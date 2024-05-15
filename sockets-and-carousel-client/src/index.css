@@ -78,13 +78,23 @@ body {
   position: relative;
   border: 2px solid green;
   margin-right: 360px;
-  overflow-x: scroll;
+  /* overflow-x: scroll;
   display: flex;
   flex-direction: row;
   height: 100%;
   width: 100%;
-  row-gap: 8px;
+  gap: 8px;
+  padding: 24px 0px; */
+}
+
+.carousel-images-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  gap: 8px;
   padding: 24px 0px;
+  overflow-x: scroll;
 }
 
 .navbar-container {

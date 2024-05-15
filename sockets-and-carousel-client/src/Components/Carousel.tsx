@@ -11,9 +11,15 @@ export default function Carousel(): JSX.Element {
 
   return (
     <section className="home-carousel-container">
-      {slugs.map((slug) => (
-        <img src={`http://localhost:3000/${slug}`} className="bg-cover" />
-      ))}
+      <div className="carousel-images-container">
+        {slugs.map((slug) => (
+          <img
+            key={slug}
+            src={`http://localhost:3000/${slug}`}
+            className="bg-cover"
+          />
+        ))}
+      </div>
       <button className="arrow arrow-left">
         <svg
           width="20"
