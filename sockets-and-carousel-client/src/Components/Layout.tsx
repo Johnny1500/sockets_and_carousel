@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 
 export default function Layout() {
   return (
-    <div className="min-w-[300px]">
+    <div>
       <Navbar />
       <main className="page-container">
         <Outlet />

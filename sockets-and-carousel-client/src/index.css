@@ -20,12 +20,13 @@
 body {
   --navbar-shift: 64px;
   height: 100%;
+  min-width: 500px;
 }
 
 .page-container {
   position: relative;
   margin-top: var(--navbar-shift);
-  min-height: calc(100vh - var(--navbar-shift));  
+  height: calc(100vh - var(--navbar-shift));
 }
 
 .navbar-container {
@@ -34,11 +35,12 @@ body {
   left: 0;
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 25px;
   height: var(--navbar-shift);
   min-width: 100%;
   opacity: 1;
-  font-weight: bold;  
+  font-weight: 600;
+  font-size: 24px;
   z-index: 100;
   padding: 16px 40px;
   border-bottom: 1px solid grey;
