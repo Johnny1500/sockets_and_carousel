@@ -4,12 +4,6 @@
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  /* line-height: 1.5;
-  font-weight: 400; */
-
-  /* color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -73,28 +67,22 @@ body {
 }
 
 .home-carousel-container {
-  max-width: calc(100vw - 360px);
   min-width: 500px;
+  height: 100%;
   position: relative;
   border: 2px solid green;
   margin-right: 360px;
-  /* overflow-x: scroll;
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  width: 100%;
-  gap: 8px;
-  padding: 24px 0px; */
+  flex: 1;
+  padding: 24px 8px;
 }
 
 .carousel-images-container {
+  position: relative;
   display: flex;
   flex-direction: row;
+  gap: 8px;  
   height: 100%;
-  width: 100%;
-  gap: 8px;
-  padding: 24px 0px;
-  overflow-x: scroll;
+  overflow: hidden;
 }
 
 .navbar-container {
