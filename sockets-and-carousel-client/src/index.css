@@ -30,9 +30,9 @@ body {
   background-color: #f1f3f5;
   height: calc(100vh - var(--navbar-shift));
   width: 360px;
-  right: 0;  
-  border-right: 2px solid #E2EAF1;
-  border-left: 2px solid #E2EAF1;
+  right: 0;
+  border-right: 2px solid #e2eaf1;
+  border-left: 2px solid #e2eaf1;
   box-sizing: border-box;
 }
 
@@ -71,7 +71,7 @@ body {
 .home-carousel-container {
   min-width: 500px;
   height: 100%;
-  position: relative;  
+  position: relative;
   margin-right: 360px;
   flex: 1;
   padding: 24px 8px;
@@ -100,7 +100,7 @@ body {
   font-size: 24px;
   z-index: 100;
   padding: 16px 40px;
-  border-bottom: 2px solid #E2EAF1;
+  border-bottom: 2px solid #e2eaf1;
   background-color: white;
 }
 
@@ -112,7 +112,7 @@ body {
   background-color: white;
   display: flex;
   flex-direction: row;
-  z-index: 100;  
+  z-index: 100;
 }
 
 .chat-input-container input {
@@ -121,21 +121,61 @@ body {
 }
 
 .user-message {
-  position: relative; 
+  position: relative;
   padding: 8px 12px;
   font-size: 14px;
   width: 300px;
-  border-radius: 8px 8px 8px 0;  
+  border-radius: 8px 8px 8px 0;
 }
 
 .user-message-container {
   position: relative;
-  margin: 16px;
   display: flex;
   flex-direction: column;
-  align-items: end;
   justify-content: space-between;
   gap: 8px;
+}
+
+.user-message-container-home {
+  align-items: end;
   height: calc(100% - 136px);
-  box-sizing: border-box;  
+  box-sizing: border-box;
+  margin: 16px;
+  margin-right: 4px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+}
+
+.user-message-container-dashboard {
+  align-items: start;
+  height: calc(100% - 48px);
+  padding: 16px;
+  border-bottom: solid 2px #e2eaf1;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+}
+
+.user-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 360px;
+  height: 100%;
+  border-right: solid 2px #e2eaf1;
+}
+
+.user-card {
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  height: 64px;
+  gap: 8px;
+  background-color: white;
+  border-bottom: 2px solid #e2eaf1;
+}
+
+.user-card:hover {
+  background-color: #f2f2f2;
+  cursor: pointer;
 }
