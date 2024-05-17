@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 
+// Бесконечная карусель (слайдер) с изображениеями
 export default function Carousel(): JSX.Element {
   const initSlugs = [
     "unsplash_7AcMUSYRZpU.png",
@@ -52,7 +53,7 @@ export default function Carousel(): JSX.Element {
   }
 
   return (
-    <section className="home-carousel-container">
+    <div className="home-carousel-container">
       <div className="carousel-images-container" ref={imgContainerRef}>
         {slugs.map((slug) => (
           <div
@@ -106,6 +107,6 @@ export default function Carousel(): JSX.Element {
           />
         </svg>
       </button>
-    </section>
+    </div>
   );
 }
