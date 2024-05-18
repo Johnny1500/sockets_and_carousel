@@ -1,29 +1,17 @@
 import express from "express";
 import { createServer } from "node:http";
-// import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { Server } from "socket.io";
 import { Request, Response } from "express";
 import cors from "cors";
+import {
+  ServerToClientEvents,
+  ClientToServerEvents,
+  InterServerEvents,
+  SocketData,
+} from "./interfaces";
 
-interface ServerToClientEvents {
-  noArg: () => void;
-  basicEmit: (a: number, b: string, c: Buffer) => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
-}
-
-interface ClientToServerEvents {
-  hello: () => void;
-}
-
-interface InterServerEvents {
-  ping: () => void;
-}
-
-interface SocketData {
-  name: string;
-  age: number;
-}
+let managerID: string;
 
 const app = express();
 
@@ -43,17 +31,24 @@ const io = new Server<
   },
 });
 
-// console.log("__dirname", __dirname);
-
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "index.html"));
 });
 
 io.on("connection", (socket) => {
   console.log("socket.id === ", socket.id);
-  // socket.on("chat message", (msg) => {
-  //   io.emit("chat message", msg);
-  // });
+
+  socket.on("initUser", (name) => {
+    if (managerID) {
+      console.log(`${name} was assigned as a regular user!`);
+    } else {
+      // Назначение единственного менеджера, который сможет переписываться со всеми остальными пользователями
+      managerID = socket.id;
+      console.log(`${name} was assigned as a manager!`);
+    }
+
+    io.to(socket.id).emit("assignManager", managerID);
+  });
 });
 
 server.listen(3000, () => {

@@ -2,16 +2,31 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 
 import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+
+import useStore from "./store";
+
+interface ClientToServerEvents {
+  initUser: (name: string) => void;
+}
+
+interface ServerToClientEvents {
+  assignManager: (id: string) => void;
+}
 
 function App(): JSX.Element {
   // Отключение двойного моунтинга в дев режиме
   const ignoreRef = useRef<boolean>(false);
 
-  // let ignore = false;
+  const [setAssignedManagerID, setSocket] = useStore((state) => [
+    state.setAssignedManagerID,
+    state.setSocket,
+  ]);
 
   // Создание мокового пользователя и установка соединения с сервером
   useEffect(() => {
+    let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
+
     async function fetchPartialRandomUser() {
       try {
         const response = await fetch(
@@ -40,10 +55,16 @@ function App(): JSX.Element {
       const user = await fetchPartialRandomUser();
 
       if (user) {
-        const socket = io("ws://localhost:3000");
+        socket = io("ws://localhost:3000");
 
         socket.on("connect", () => {
-          console.log(socket.id);
+          socket.emit("initUser", user.name);
+        });
+
+        socket.on("assignManager", (id) => {
+          console.log(`User was assigned to a manager with id ${id}`);
+          setAssignedManagerID(id);
+          setSocket(socket);
         });
       }
 
@@ -51,12 +72,12 @@ function App(): JSX.Element {
     }
 
     if (!ignoreRef.current) {
-      console.log("test useEffect");
       initialFetchUser();
     }
 
     return () => {
       ignoreRef.current = true;
+      if (socket) socket.disconnect();
     };
   }, []);
 
