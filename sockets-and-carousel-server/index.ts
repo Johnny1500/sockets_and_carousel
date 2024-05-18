@@ -6,13 +6,42 @@ import { Server } from "socket.io";
 import { Request, Response } from "express";
 import cors from "cors";
 
+interface ServerToClientEvents {
+  noArg: () => void;
+  basicEmit: (a: number, b: string, c: Buffer) => void;
+  withAck: (d: string, callback: (e: number) => void) => void;
+}
+
+interface ClientToServerEvents {
+  hello: () => void;
+}
+
+interface InterServerEvents {
+  ping: () => void;
+}
+
+interface SocketData {
+  name: string;
+  age: number;
+}
+
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.static("assets"));
 
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 // console.log("__dirname", __dirname);
 
@@ -21,9 +50,10 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
-  });
+  console.log("socket.id === ", socket.id);
+  // socket.on("chat message", (msg) => {
+  //   io.emit("chat message", msg);
+  // });
 });
 
 server.listen(3000, () => {
