@@ -131,8 +131,7 @@ body {
 .user-message-container {
   position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: column;  
   gap: 8px;
 }
 
@@ -178,4 +177,14 @@ body {
 .user-card:hover {
   background-color: #f2f2f2;
   cursor: pointer;
+}
+
+.placeholder-message {
+  font-weight: 600;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
 }

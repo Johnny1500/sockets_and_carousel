@@ -6,8 +6,10 @@ import { Message } from "../../../interfaces";
 // Поле инпута для чата
 export default function ChatInput({
   kindOfSender = "user",
+  receiverId,
 }: {
   kindOfSender?: "manager" | "user";
+  receiverId?: string;
 }): JSX.Element {
   const [messageContent, setMessageContent] = useState<string>("");
   const [updateMessages, socket, currentUserID, assignedManagerID] = useStore(
@@ -18,8 +20,6 @@ export default function ChatInput({
       state.assignedManagerID,
     ]
   );
-
-  console.log("kindOfSender", kindOfSender);
 
   function handleUserInputChange(e: React.FormEvent<HTMLInputElement>) {
     const target = e.target as HTMLInputElement;
@@ -40,10 +40,11 @@ export default function ChatInput({
           kindOfSender,
           timestamp: Date.now(),
           senderId: currentUserID,
-          receiverId: assignedManagerID,
+          receiverId: receiverId ?? assignedManagerID,
         };
 
         updateMessages(message);
+        socket?.emit("sendMessage", message);
       }}
     >
       <input

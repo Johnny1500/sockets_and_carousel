@@ -15,13 +15,19 @@ function App(): JSX.Element {
   // Отключение двойного моунтинга в дев режиме
   const ignoreRef = useRef<boolean>(false);
 
-  const [setAssignedManagerID, setCurrentUserID, setSocket, updateUsers] =
-    useStore((state) => [
-      state.setAssignedManagerID,
-      state.setCurrentUserID,
-      state.setSocket,
-      state.updateUsers,
-    ]);
+  const [
+    setAssignedManagerID,
+    setCurrentUserID,
+    setSocket,
+    updateUsers,
+    updateMessages,
+  ] = useStore((state) => [
+    state.setAssignedManagerID,
+    state.setCurrentUserID,
+    state.setSocket,
+    state.updateUsers,
+    state.updateMessages,
+  ]);
 
   // Создание мокового пользователя и установка соединения с сервером
   useEffect(() => {
@@ -72,6 +78,10 @@ function App(): JSX.Element {
         socket.on("setNewUser", (user) => {
           console.log(`Set new user with id ${user.id}`);
           updateUsers(user);
+        });
+
+        socket.on("receiveMessage", (message) => {
+          updateMessages(message);
         });
       }
     }

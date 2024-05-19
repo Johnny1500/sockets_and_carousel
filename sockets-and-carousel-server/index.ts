@@ -7,16 +7,8 @@ import {
   ClientToServerEvents,
   PartialUser,
   User,
-  Message
+  Message,
 } from "../interfaces";
-
-// export interface InterServerEvents {
-//   ping: () => void;
-// }
-
-// export interface SocketData {
-//   name: string;
-// }
 
 let manager: User | null = null;
 
@@ -26,10 +18,7 @@ app.use(cors({ origin: "*" }));
 app.use(express.static("assets"));
 
 const server = createServer(app);
-const io = new Server<
-  ClientToServerEvents,
-  ServerToClientEvents
->(server, {
+const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
@@ -37,8 +26,6 @@ const io = new Server<
 });
 
 io.on("connection", (socket) => {
-  console.log("socket.id === ", socket.id);
-
   socket.on("initUser", (partialUser: PartialUser) => {
     const user: User = { ...partialUser, id: socket.id, status: "user" };
 
@@ -57,9 +44,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMessage", (message: Message) => {
+    console.log(
+      `Sending a message ${message.content} from ${message.senderId} to ${message.receiverId}`
+    );
     io.to(message.receiverId).emit("receiveMessage", message);
-  })
-
+  });
 });
 
 server.listen(3000, () => {
