@@ -1,18 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { Socket } from "socket.io-client";
-import { User } from "../../interfaces";
-
-type Message = {
-  id: string;
-  userId: string;
-  timestamp: number;
-  content: string;
-  sender: "manager" | "user";
-};
+import { User, Message } from "../../interfaces";
 
 type State = {
   socket: Socket | null;
@@ -42,7 +33,13 @@ const useStore = create<State & Actions>()(
         set((state) => void state.users.push(user), false, "updateUsers"),
       updateMessages: (message) =>
         set(
-          (state) => void state.messages.push(message),
+          (state) => {
+            const dublicateMessage = [...state.messages].find(
+              (item) => item.id === message.id
+            );
+
+            if (!dublicateMessage) state.messages.push(message);
+          },
           false,
           "updateMessages"
         ),

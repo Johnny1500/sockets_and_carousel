@@ -71,7 +71,6 @@ function App(): JSX.Element {
 
         socket.on("setNewUser", (user) => {
           console.log(`Set new user with id ${user.id}`);
-
           updateUsers(user);
         });
       }

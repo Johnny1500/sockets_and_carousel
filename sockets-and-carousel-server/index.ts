@@ -1,6 +1,5 @@
 import express from "express";
 import { createServer } from "node:http";
-import { join } from "node:path";
 import { Server } from "socket.io";
 import cors from "cors";
 import {
@@ -8,15 +7,16 @@ import {
   ClientToServerEvents,
   PartialUser,
   User,
+  Message
 } from "../interfaces";
 
-export interface InterServerEvents {
-  ping: () => void;
-}
+// export interface InterServerEvents {
+//   ping: () => void;
+// }
 
-export interface SocketData {
-  name: string;
-}
+// export interface SocketData {
+//   name: string;
+// }
 
 let manager: User | null = null;
 
@@ -28,9 +28,7 @@ app.use(express.static("assets"));
 const server = createServer(app);
 const io = new Server<
   ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
+  ServerToClientEvents
 >(server, {
   cors: {
     origin: "*",
@@ -57,6 +55,11 @@ io.on("connection", (socket) => {
 
     io.to(user.id).emit("assignManager", manager.id, user.id, user);
   });
+
+  socket.on("sendMessage", (message: Message) => {
+    io.to(message.receiverId).emit("receiveMessage", message);
+  })
+
 });
 
 server.listen(3000, () => {

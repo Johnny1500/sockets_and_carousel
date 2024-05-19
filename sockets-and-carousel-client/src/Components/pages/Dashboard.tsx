@@ -25,7 +25,7 @@ export default function Dashboard(): JSX.Element {
             Информативное сообщение с просьбой, в две строки
           </UserMessage>
         </div>
-        <ChatInput />
+        <ChatInput kindOfSender="manager" />
       </div>
     </div>
   );
