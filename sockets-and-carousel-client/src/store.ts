@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { Socket } from "socket.io-client";
+import { User } from "../../interfaces";
 
 type Message = {
   id: string;
@@ -13,16 +14,10 @@ type Message = {
   own: boolean;
 };
 
-type User = {
-  id: string;
-  avatarURL: string;
-  status: "manager" | "user";
-  name: "string";
-};
-
 type State = {
   socket: Socket | null;
   assignedManagerID: string;
+  currentUserID: string;
   messages: Message[];
   users: User[];
 };
@@ -31,6 +26,7 @@ type Actions = {
   updateUsers: (user: User) => void;
   updateMessages: (message: Message) => void;
   setAssignedManagerID: (assignedManagerID: string) => void;
+  setCurrentUserID: (currentUserID: string) => void;
   setSocket: (socket: Socket) => void;
 };
 
@@ -39,6 +35,7 @@ const useStore = create<State & Actions>()(
     devtools((set) => ({
       socket: null,
       assignedManagerID: "",
+      currentUserID: "",
       users: [],
       messages: [],
       updateUsers: (user) =>
@@ -55,6 +52,17 @@ const useStore = create<State & Actions>()(
           },
           false,
           "setAssignedManagerID"
+        ),
+      setCurrentUserID: (currentUserID) =>
+        set(
+          (state) => {
+            return {
+              ...state,
+              currentUserID,
+            };
+          },
+          false,
+          "setCurrentUserID"
         ),
       setSocket: (socket) =>
         set(

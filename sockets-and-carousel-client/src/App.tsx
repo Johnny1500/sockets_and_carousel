@@ -5,29 +5,29 @@ import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 
 import useStore from "./store";
-
-interface ClientToServerEvents {
-  initUser: (name: string) => void;
-}
-
-interface ServerToClientEvents {
-  assignManager: (id: string) => void;
-}
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+  PartialUser,
+} from "../../interfaces";
 
 function App(): JSX.Element {
   // Отключение двойного моунтинга в дев режиме
   const ignoreRef = useRef<boolean>(false);
 
-  const [setAssignedManagerID, setSocket] = useStore((state) => [
-    state.setAssignedManagerID,
-    state.setSocket,
-  ]);
+  const [setAssignedManagerID, setCurrentUserID, setSocket, updateUsers] =
+    useStore((state) => [
+      state.setAssignedManagerID,
+      state.setCurrentUserID,
+      state.setSocket,
+      state.updateUsers,
+    ]);
 
   // Создание мокового пользователя и установка соединения с сервером
   useEffect(() => {
     let socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
-    async function fetchPartialRandomUser() {
+    async function fetchPartialRandomUser(): Promise<PartialUser | undefined> {
       try {
         const response = await fetch(
           "https://random-data-api.com/api/users/random_user"
@@ -58,17 +58,19 @@ function App(): JSX.Element {
         socket = io("ws://localhost:3000");
 
         socket.on("connect", () => {
-          socket.emit("initUser", user.name);
+          socket.emit("initUser", user);
         });
 
-        socket.on("assignManager", (id) => {
+        socket.on("assignManager", (managerID, id, user) => {
           console.log(`User was assigned to a manager with id ${id}`);
-          setAssignedManagerID(id);
+          setAssignedManagerID(managerID);
+          setCurrentUserID(id);
           setSocket(socket);
+          updateUsers(user);
         });
       }
 
-      console.log("useEffect user", user);
+      // console.log("useEffect user", user);
     }
 
     if (!ignoreRef.current) {

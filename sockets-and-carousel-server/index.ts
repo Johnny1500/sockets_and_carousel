@@ -6,10 +6,18 @@ import { Request, Response } from "express";
 import cors from "cors";
 import {
   ServerToClientEvents,
-  ClientToServerEvents,
-  InterServerEvents,
-  SocketData,
-} from "./interfaces";
+  ClientToServerEvents,  
+  PartialUser,
+  User,
+} from "../interfaces";
+
+export interface InterServerEvents {
+  ping: () => void;
+}
+
+export interface SocketData {
+  name: string;
+}
 
 let managerID: string;
 
@@ -38,16 +46,19 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log("socket.id === ", socket.id);
 
-  socket.on("initUser", (name) => {
+  socket.on("initUser", (partialUser: PartialUser) => {
+    const user: User = { ...partialUser, id: socket.id, status: "user" };
+
     if (managerID) {
-      console.log(`${name} was assigned as a regular user!`);
+      console.log(`${user.name} was assigned as a regular user!`);
     } else {
       // Назначение единственного менеджера, который сможет переписываться со всеми остальными пользователями
-      managerID = socket.id;
-      console.log(`${name} was assigned as a manager!`);
+      managerID = user.id;
+      user.status = "manager";
+      console.log(`${user.name} was assigned as a manager!`);
     }
 
-    io.to(socket.id).emit("assignManager", managerID);
+    io.to(socket.id).emit("assignManager", managerID, user.id, user);
   });
 });
 
