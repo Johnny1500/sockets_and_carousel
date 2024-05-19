@@ -2,11 +2,10 @@ import express from "express";
 import { createServer } from "node:http";
 import { join } from "node:path";
 import { Server } from "socket.io";
-import { Request, Response } from "express";
 import cors from "cors";
 import {
   ServerToClientEvents,
-  ClientToServerEvents,  
+  ClientToServerEvents,
   PartialUser,
   User,
 } from "../interfaces";
@@ -19,7 +18,7 @@ export interface SocketData {
   name: string;
 }
 
-let managerID: string;
+let manager: User | null = null;
 
 const app = express();
 
@@ -39,26 +38,24 @@ const io = new Server<
   },
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(join(__dirname, "index.html"));
-});
-
 io.on("connection", (socket) => {
   console.log("socket.id === ", socket.id);
 
   socket.on("initUser", (partialUser: PartialUser) => {
     const user: User = { ...partialUser, id: socket.id, status: "user" };
 
-    if (managerID) {
+    if (manager) {
       console.log(`${user.name} was assigned as a regular user!`);
+      io.to(manager.id).emit("setNewUser", user);
+      io.to(user.id).emit("setNewUser", manager);
     } else {
       // Назначение единственного менеджера, который сможет переписываться со всеми остальными пользователями
-      managerID = user.id;
+      manager = user;
       user.status = "manager";
       console.log(`${user.name} was assigned as a manager!`);
     }
 
-    io.to(socket.id).emit("assignManager", managerID, user.id, user);
+    io.to(user.id).emit("assignManager", manager.id, user.id, user);
   });
 });
 

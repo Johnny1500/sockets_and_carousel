@@ -1,6 +1,7 @@
 // Общие интерфейсы для клиента и сервера
 export interface ServerToClientEvents {
   assignManager: (managerID: string, id: string, user: User) => void;
+  setNewUser: (user: User) => void;
 }
 
 export interface ClientToServerEvents {

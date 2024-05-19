@@ -11,7 +11,7 @@ type Message = {
   userId: string;
   timestamp: number;
   content: string;
-  own: boolean;
+  sender: "manager" | "user";
 };
 
 type State = {
@@ -39,28 +39,22 @@ const useStore = create<State & Actions>()(
       users: [],
       messages: [],
       updateUsers: (user) =>
-        set((state) => state.users.push(user), false, "updateUsers"),
+        set((state) => void state.users.push(user), false, "updateUsers"),
       updateMessages: (message) =>
-        set((state) => state.messages.push(message), false, "updateMessages"),
+        set(
+          (state) => void state.messages.push(message),
+          false,
+          "updateMessages"
+        ),
       setAssignedManagerID: (assignedManagerID) =>
         set(
-          (state) => {
-            return {
-              ...state,
-              assignedManagerID,
-            };
-          },
+          (state) => void (state.assignedManagerID = assignedManagerID),
           false,
           "setAssignedManagerID"
         ),
       setCurrentUserID: (currentUserID) =>
         set(
-          (state) => {
-            return {
-              ...state,
-              currentUserID,
-            };
-          },
+          (state) => void (state.currentUserID = currentUserID),
           false,
           "setCurrentUserID"
         ),

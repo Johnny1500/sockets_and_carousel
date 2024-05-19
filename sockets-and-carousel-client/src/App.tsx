@@ -68,9 +68,13 @@ function App(): JSX.Element {
           setSocket(socket);
           updateUsers(user);
         });
-      }
 
-      // console.log("useEffect user", user);
+        socket.on("setNewUser", (user) => {
+          console.log(`Set new user with id ${user.id}`);
+
+          updateUsers(user);
+        });
+      }
     }
 
     if (!ignoreRef.current) {
