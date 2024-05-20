@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import useStore from "../store";
 import { v4 as uuidv4 } from "uuid";
 import { Message } from "../../../interfaces";
@@ -12,6 +12,8 @@ export default function ChatInput({
   receiverId?: string;
 }): JSX.Element {
   const [messageContent, setMessageContent] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const [updateMessages, socket, currentUserID, assignedManagerID] = useStore(
     (state) => [
       state.updateMessages,
@@ -32,26 +34,30 @@ export default function ChatInput({
       className="chat-input-container"
       onSubmit={async (e) => {
         e.preventDefault();
-        console.log("input messageContent", messageContent);
+        
+        if (messageContent.length > 0) {
+          const message: Message = {
+            id: uuidv4(),
+            content: messageContent,
+            kindOfSender,
+            timestamp: Date.now(),
+            senderId: currentUserID,
+            receiverId: receiverId ?? assignedManagerID,
+          };
 
-        const message: Message = {
-          id: uuidv4(),
-          content: messageContent,
-          kindOfSender,
-          timestamp: Date.now(),
-          senderId: currentUserID,
-          receiverId: receiverId ?? assignedManagerID,
-        };
-
-        updateMessages(message);
-        socket?.emit("sendMessage", message);
+          updateMessages(message);
+          socket?.emit("sendMessage", message);
+          inputRef.current!.value = "";
+          setMessageContent("");
+        }
       }}
     >
       <input
         className="flex-1 text-[#77828C] pl-4 text-sm"
-        maxLength={100}
+        maxLength={80}
         placeholder="Написать сообщение..."
         onChange={(e) => handleUserInputChange(e)}
+        ref={inputRef}
       />
       <button className="h-full w-12 px-4" type="submit">
         <svg

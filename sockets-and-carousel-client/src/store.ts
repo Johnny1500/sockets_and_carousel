@@ -21,6 +21,7 @@ type Actions = {
   setSocket: (socket: Socket) => void;
 };
 
+// Zustand store
 const useStore = create<State & Actions>()(
   immer(
     devtools((set) => ({

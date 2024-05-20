@@ -28,29 +28,27 @@ export default function HomeChat(): JSX.Element {
       <h2 className="sticky top-0 h-[56px] text-xl font-semibold p-4 bg-white">
         Чат с поддержкой
       </h2>
-      <div className="user-message-container user-message-container-home">
+      <div className="user-message-home-outer-container">
         {currentMessages.length === 0 ? (
           <p className="placeholder-message">Нет сообщений</p>
         ) : (
-          <>
+          <div className="user-message-container user-message-container-home">
             {currentMessages.map((message) => {
               const user = users.find((item) => item.id === message.senderId)!;
 
-              console.log("user", user);
-
-              const { avatarURL, status } = user;
+              const { avatarURL, id } = user;
 
               return (
                 <UserMessage
                   key={message.id}
-                  selfMessage={status === "user" ? true : false}
+                  selfMessage={currentUserID === id ? true : false}
                   avatarUrl={avatarURL}
                 >
                   {message.content}
                 </UserMessage>
               );
             })}
-          </>
+          </div>
         )}
       </div>
       <ChatInput />

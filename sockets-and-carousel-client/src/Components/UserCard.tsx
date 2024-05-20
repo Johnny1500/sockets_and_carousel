@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 type Props = {
   name: string;
   message: string;
@@ -14,15 +16,25 @@ export default function UserCard({
   id,
   current = false,
 }: Props): JSX.Element {
+  const [hover, setHover] = useState<boolean>(false);
+  const cardStyle = {
+    backgroundColor: current ? "#b9d7fb" : hover ? "#f2f2f2" : "white",
+  };
+
   return (
     <div
       className="user-card"
-      id={id}
-      style={{ backgroundColor: current ? "#b9d7fb" : "#f2f2f2" }}
+      data-id={id}
+      style={cardStyle}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
       <div
         className="bg-[#f2f2f2] rounded-full min-w-10 h-10"
-        style={{ backgroundImage: avatarUrl }}
+        style={{
+          backgroundImage: `url(${avatarUrl})`,
+          backgroundSize: "cover",
+        }}
       />
       <div className="block">
         <p className="font-semibold mb-0.5 text-sm">{name}</p>

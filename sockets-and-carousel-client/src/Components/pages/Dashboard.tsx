@@ -22,7 +22,11 @@ export default function Dashboard(): JSX.Element {
     (a, b) => b.timestamp - a.timestamp
   );
   const usersIdsWithMessages = Array.from(
-    new Set([...sortedMessages].map((message) => message.senderId))
+    new Set(
+      [...sortedMessages]
+        .filter((message) => message.senderId !== assignedManagerID)
+        .map((message) => message.senderId)
+    )
   );
 
   const usersWithLastMessage = usersIdsWithMessages.map((id) => {
@@ -36,27 +40,25 @@ export default function Dashboard(): JSX.Element {
   const currentMessages = [...sortedMessages].filter(
     (message) =>
       message.senderId === currentChatUserID ||
-      message.senderId === assignedManagerID
+      (message.senderId === assignedManagerID &&
+        message.receiverId === currentChatUserID)
   );
 
   console.log("usersWithLastMessage === ", usersWithLastMessage);
 
   function handleUserListClick(e: React.MouseEvent) {
     const target = e.target as HTMLElement;
-    const userBlock = target.closest("div");
+    const userBlock = target.closest("div.user-card") as HTMLElement;
 
-    console.log("userBlock === ", userBlock);
-    console.log("userBlock.id === ", userBlock.id);
+    if (!userBlock || !userBlock.dataset.id) return;
 
-    if (!userBlock || userBlock.id) return;
-
-    setCurrentChatUserID(userBlock.id);
+    setCurrentChatUserID(userBlock.dataset.id);
   }
 
   return (
     <div className="flex h-full min-w-[800px] bg-[#f1f3f5]">
       {assignedManagerID !== currentUserID ? (
-        <p className="font-semibold">
+        <p className="placeholder-message text-xl">
           Менеджером, который может общаться со всеми пользователями,
           назначается только первое открытое окно
         </p>
@@ -64,7 +66,7 @@ export default function Dashboard(): JSX.Element {
         <>
           <div className="user-list" onClick={(e) => handleUserListClick(e)}>
             {messages.length === 0 ? (
-              <p>Нет активных чатов</p>
+              <p className="placeholder-message">Нет активных чатов</p>
             ) : (
               usersWithLastMessage.map((userTuple) => {
                 const renderUser = users.find(
@@ -87,31 +89,34 @@ export default function Dashboard(): JSX.Element {
             )}
           </div>
           <div className="block flex-1 h-full relative">
-            <div className="user-message-container user-message-container-dashboard">
-              {currentMessages.length === 0 ? (
-                <p className="font-semibold">Нет сообщений</p>
+            <div className="user-message-dashboard-outer-container">
+              {/* <div className="user-message-container user-message-container-dashboard"> */}
+              {currentMessages.length === 0 || !currentChatUserID ? (
+                <p className="placeholder-message">Нет сообщений</p>
               ) : (
-                <>
+                <div className="user-message-container user-message-container-dashboard">
                   {currentMessages.map((message) => {
                     const user = users.find(
                       (item) => item.id === message.senderId
                     )!;
 
-                    const { avatarURL, status } = user;
+                    const { avatarURL, id } = user;
 
                     return (
                       <UserMessage
-                        selfMessage={status === "manager" ? true : false}
+                        key={message.id}
+                        selfMessage={currentUserID === id ? true : false}
                         avatarUrl={avatarURL}
                       >
-                        Информативное сообщение с просьбой, в две строки
+                        {message.content}
                       </UserMessage>
                     );
                   })}
-                </>
+                </div>
               )}
+              {/* </div> */}
             </div>
-            <ChatInput kindOfSender="manager" />
+            <ChatInput kindOfSender="manager" receiverId={currentChatUserID!} />
           </div>
         </>
       )}
